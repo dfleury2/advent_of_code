@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ get_value(vector<int>& op_codes, int index, parameter_mode mode)
 void
 compute(vector<int>& op_codes)
 {
-    for(int i = 0; i < op_codes.size();) {
+    for(size_t i = 0; i < op_codes.size();) {
 
         auto op_code = get_op_code(op_codes[i]);
         auto mode_1 = get_mode(op_codes[i], 0);

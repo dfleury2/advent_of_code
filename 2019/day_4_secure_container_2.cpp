@@ -19,10 +19,10 @@ next(string& current) {
 
 bool
 is_valid(const std::string& v) {
-    for(int i = 0; i < v.size() - 1; ++i)
+    for(size_t i = 0; i < v.size() - 1; ++i)
         if (v[i] > v[i+1]) return false;
     
-    for(int i = 0; i < v.size() - 1; ++i)
+    for(size_t i = 0; i < v.size() - 1; ++i)
         if (v[i] == v[i+1]) return true;
     
     return false;
@@ -33,7 +33,7 @@ is_valid_2(const std::string& v) {
     
     char last = v[0];
     int current_size = 1;
-    for(int i = 1; i < v.size(); ++i) {
+    for(size_t i = 1; i < v.size(); ++i) {
         if (v[i] == last) {
             current_size++;
         } else {

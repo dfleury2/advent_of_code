@@ -14,7 +14,7 @@ int main() {
     op_codes[1] = 12;
     op_codes[2] = 2;
     
-    for(int i = 0; i < op_codes.size(); i += 4) {
+    for(size_t i = 0; i < op_codes.size(); i += 4) {
         if (op_codes.at(i) == 99) break;
         else if (op_codes[i] == 1) {
             op_codes[op_codes[i + 3]] = op_codes[op_codes[i + 1]] + op_codes[op_codes[i + 2]];
