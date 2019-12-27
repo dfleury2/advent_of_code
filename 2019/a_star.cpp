@@ -6,6 +6,8 @@
 
 using namespace std;
 
+int count = 0;
+
 struct Node {
     int x = 0, y = 0;
     int cout = 0;
@@ -42,19 +44,19 @@ voisin(const Graph& g, const Node& u) {
 
     Node haut = u;
     haut.y++;
-    if (haut.y < (int)g.size() && g[haut.y][haut.x] != 'X') tmp.push_back(haut);
+    if (haut.y < (int)g.size() && g[haut.y][haut.x] == '.') tmp.push_back(haut);
 
     Node droite = u;
     droite.x++;
-    if (droite.x < (int)g[0].size() && g[droite.y][droite.x] != 'X') tmp.push_back(droite);
+    if (droite.x < (int)g[0].size() && g[droite.y][droite.x] == '.') tmp.push_back(droite);
 
     Node bas = u;
     bas.y--;
-    if (bas.y >= 0 && g[bas.y][bas.x] != 'X') tmp.push_back(bas);
+    if (bas.y >= 0 && g[bas.y][bas.x] == '.') tmp.push_back(bas);
 
     Node gauche = u;
     gauche.x--;
-    if (gauche.x >= 0 && g[gauche.y][gauche.x] != 'X') tmp.push_back(gauche);
+    if (gauche.x >= 0 && g[gauche.y][gauche.x] == '.') tmp.push_back(gauche);
 
     return tmp;
 }
@@ -64,7 +66,7 @@ struct AccessiblePriorityQueue : std::priority_queue<Node> {
     std::priority_queue<Node>::container_type::iterator end() { return c.end(); }
 };
 
-Node cheminPlusCourt(const Graph& g, const Node& objectif, const Node& depart)
+Node cheminPlusCourt(Graph& g, const Node& objectif, const Node& depart)
 {
     Nodes closedList;
     AccessiblePriorityQueue openList;
@@ -79,12 +81,15 @@ Node cheminPlusCourt(const Graph& g, const Node& objectif, const Node& depart)
             Node previous;
             previous.x = u.from_x;
             previous.y = u.from_y;
+            g[previous.y][previous.x] = '+';
             while (!(previous == depart)) {
                 for (auto&& next : closedList) {
                     if (next == previous) {
                         u = previous;
                         previous.x = next.from_x;
                         previous.y = next.from_y;
+                        g[previous.y][previous.x] = '+';
+                        ++::count;
                         break;
                     }
                 }
@@ -144,28 +149,78 @@ int main()
     //g.push_back("???XXXXX??");
 
     //           0123456789   
-    g.push_back("          "); // 6
-    g.push_back("          "); // 5
-    g.push_back(" XXXXXXX  "); // 4
-    g.push_back("       X  "); // 3
-    g.push_back("       X  "); // 2
-    g.push_back("       X  "); // 1
-    g.push_back("P         "); // 0
+    //g.push_back("          "); // 6
+    //g.push_back("          "); // 5
+    //g.push_back(" XXXXXXX  "); // 4
+    //g.push_back("       X  "); // 3
+    //g.push_back("       X  "); // 2
+    //g.push_back("       X  "); // 1
+    //g.push_back("P         "); // 0
 
-    std::reverse(begin(g), end(g));
+    g.push_back("    ###################                         ");
+    g.push_back("    #.#...............#                         ");
+    g.push_back("    #.#.#######.#####.#                         ");
+    g.push_back("    #.#.#.......#...#.#                         ");
+    g.push_back("    #.#.#.#######.###.#                         ");
+    g.push_back("    #.#.#.#     #.....#                         ");
+    g.push_back("    #.#.#.#  ####.####                          ");
+    g.push_back("    #...#.# #.....#                             ");
+    g.push_back("    #.###.# #.####                              ");
+    g.push_back("    #...#.# #.#                                 ");
+    g.push_back("    ###.#.# #.#                                 ");
+    g.push_back("    #...#.# ###                                 ");
+    g.push_back("    #.###.#                                     ");
+    g.push_back("    #.#...#                                     ");
+    g.push_back("    #.#.####                                    ");
+    g.push_back("    #.#.....#                                   ");
+    g.push_back("    #.#####.##                                  ");
+    g.push_back("    #.#...#...#                                 ");
+    g.push_back("    #.#.#.###.##                                ");
+    g.push_back("    #.#.#.# #...#                               ");
+    g.push_back("    #.#.#.#  ##.#       ###                     ");
+    g.push_back("    #...#.# #...#       #x#                     ");
+    g.push_back("     ####.#.#.########  #.########              ");
+    g.push_back("    #...#.#.#.........# #.........#             ");
+    g.push_back("     ##.#.#.#########.###########.#             ");
+    g.push_back("    #...#.#.....#.....#.....#...#.#             ");
+    g.push_back("    #.###.#####.#.#.###.#.###.#.#.#             ");
+    g.push_back("    #...#.......#.#.#...#.....#...#             ");
+    g.push_back("    #.#.#####.###.#.#.######## ###              ");
+    g.push_back("    #.#.......#...#.#.........#                 ");
+    g.push_back("    #.#########.#.###########.#                 ");
+    g.push_back("    #.....#.#...#.#.........#.#                 ");
+    g.push_back("     ####.#.#.#####.#.#######.#                 ");
+    g.push_back("    #...#...#.#.....#.......#.#                 ");
+    g.push_back("    #.#.#.###.#.###########.#.#                 ");
+    g.push_back("    #.#...#...#...#.....#...#.#                 ");
+    g.push_back("    #.## ##.#.###.#.#####.###.#                 ");
+    g.push_back("    #.....#.#.#...#.....#.#...#                 ");
+    g.push_back("     ####.#.###.#######.#.#.##                  ");
+    g.push_back("     .....#.............#...#                   ");
+    g.push_back("      # ## ############# ###                    ");
+    g.push_back("                                                ");
+    
+    //std::reverse(begin(g), end(g));
     
     Node depart;
-    depart.x = 0;
-    depart.y = 0;
+    depart.x = 25;
+    depart.y = 21;
 
     Node objectif;
-    objectif.x = 3;
-    objectif.y = 3;
+    objectif.x = 5;
+    objectif.y = 39;
 
     Node next = depart;
     do {
         cout << next << endl;
         next = cheminPlusCourt(g, objectif, next);
-    } while (next != objectif);
+    } while (next != objectif && next != Node());
     cout << next << endl;
+
+    int plus_count = 0;
+    for (auto&& r : g) {
+        cout << r << endl;
+        plus_count += std::count(begin(r), end(r), '+');
+    }
+    cout << ::count << ", " << plus_count << endl;
 }
