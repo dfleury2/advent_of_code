@@ -4,6 +4,7 @@
 #include <string>
 #include <array>
 #include <stack>
+#include <list>
 
 using namespace std;
 
@@ -12,8 +13,7 @@ const char* movement_str[] = { "", "north", "south", "west", "east"};
 
 enum class status { hit_wall = 0, has_moved = 1, has_moved_and_repair = 2 };
 
-
-stack<movement> movements;
+stack<list<movement>> movements;
 
 constexpr int SIZE = 50;
 
@@ -41,7 +41,7 @@ display_grid()
             }
             else {
                 if (grid[y][x] == 0) cout << '.';
-                else if (grid[y][x] == 1) cout << '#';
+                else if (grid[y][x] == 1) cout << 'X';
                 else if (grid[y][x] == 2) cout << 'O';
                 else cout << ' ';
             }
@@ -55,11 +55,20 @@ bool is_grid_empty(int y, int x) {
     return grid[y][x] != 1;
 }
 
+bool is_grid_visited(int y, int x) {
+    return grid[y][x] == 0;
+}
+
 bool is_north_empty() { return is_grid_empty(position_y-1, position_x); }
 bool is_south_empty() { return is_grid_empty(position_y+1, position_x); }
 bool is_east_empty() { return is_grid_empty(position_y, position_x+1); }
 bool is_west_empty() { return is_grid_empty(position_y, position_x-1); }
 
+
+bool is_north_visited() { return is_grid_visited(position_y - 1, position_x); }
+bool is_south_visited() { return is_grid_visited(position_y + 1, position_x); }
+bool is_east_visited() { return is_grid_visited(position_y, position_x + 1); }
+bool is_west_visited() { return is_grid_visited(position_y, position_x - 1); }
 
 
 
@@ -130,9 +139,16 @@ compute(vector<long long>& op_codes)
             case 3: { // cin
                 if (movements.empty()) return;
 
-                last_movement = movements.top();
-                movements.pop();
-//                cout << "last_movement: " << movement_str[(int)last_movement] << endl;
+                if (movements.top().empty()) {
+                    movements.pop();
+                }
+                if (movements.empty()) return;
+
+
+                last_movement = movements.top().front();
+                movements.top().pop_front();
+
+                //cout << "last_movement: " << movement_str[(int)last_movement] << endl;
 
                 if (mode_1 == parameter_mode::relative) {
                     op_codes.at(op_codes[i + 1] + relative_base) = (int)last_movement;
@@ -144,7 +160,7 @@ compute(vector<long long>& op_codes)
             }
             case 4: { // cout
                 int output = get_value(op_codes, i + 1, mode_1);
-//                cout << "status: " << output <<  endl;
+                //cout << "status: " << output <<  endl;
 
                 if (output == (int)status::hit_wall) {
                     switch(last_movement) {
@@ -162,73 +178,47 @@ compute(vector<long long>& op_codes)
                         break;
                     }
                 } else {
+                    list<movement> moves;
                     switch(last_movement) {
                     case movement::north:
                         --position_y;
-//                        if (is_south_empty()) movements.push(movement::south);
-//                        if (is_west_empty())  movements.push(movement::west);
-//                        if (is_east_empty())  movements.push(movement::east);
-//                        if (is_north_empty()) movements.push(movement::north);
-                    break;
+                        if (!is_north_visited()) moves.push_back(movement::north);
+                        if (!is_east_visited()) moves.push_back(movement::east);
+                        if (!is_west_visited()) moves.push_back(movement::west);
+                        moves.push_back(movement::south);
+                        break;
                     case movement::south:
-//                        if (is_north_empty()) movements.push(movement::north);
-//                        if (is_east_empty()) movements.push(movement::east);
-//                        if (is_west_empty()) movements.push(movement::west);
-//                        if (is_south_empty()) movements.push(movement::south);
                         ++position_y;
-                    break;
+                        if (!is_south_visited()) moves.push_back(movement::south);
+                        if (!is_east_visited()) moves.push_back(movement::east);
+                        if (!is_west_visited()) moves.push_back(movement::west);
+                        moves.push_back(movement::north);
+                        break;
                     case movement::east:
                         ++position_x;
-//                        if (is_west_empty()) movements.push(movement::west);
-//                        if (is_south_empty()) movements.push(movement::south);
-//                        if (is_east_empty()) movements.push(movement::east);
-//                        if (is_north_empty()) movements.push(movement::north);
+                        if (!is_east_visited()) moves.push_back(movement::east);
+                        if (!is_south_visited()) moves.push_back(movement::south);
+                        if (!is_north_visited()) moves.push_back(movement::north);
+                        moves.push_back(movement::west);
                     break;
                     case movement::west:
                         --position_x;
-//                        if (is_east_empty()) movements.push(movement::east);
-//                        if (is_south_empty()) movements.push(movement::south);
-//                        if (is_west_empty()) movements.push(movement::west);
-//                        if (is_north_empty()) movements.push(movement::north);
+                        if (!is_west_visited()) moves.push_back(movement::west);
+                        if (!is_south_visited()) moves.push_back(movement::south);
+                        if (!is_north_visited()) moves.push_back(movement::north);
+                        moves.push_back(movement::east);
                         break;
                     }
+                    if (movements.top().size())
+                        movements.push(moves);
+                    
                     grid[position_y][position_x] = (output == (int)status::has_moved_and_repair ? 2 : 0);
                 }
 
-                bool has_push = false;
-                do {
-                switch (rand() % 4 + 1) {
-                case 1:
-                    if (is_north_empty()) {
-                        movements.push(movement::north);
-                        has_push = true;
-                    }
-                    break;
-                case 2:
-                    if (is_south_empty()) {
-                        movements.push(movement::south);
-                        has_push = true;
-                    }
-                    break;
-                case 3:
-                    if (is_east_empty()) {
-                        movements.push(movement::east);
-                        has_push = true;
-                    }
-                    break;
-                case 4:
-                    if (is_west_empty()) {
-                        movements.push(movement::west);
-                        has_push = true;
-                    }
-                    break;
-                }
-            } while(!has_push);
-
-                if (output == (int)status::has_moved_and_repair) {
-                    display_grid();
-                    return;
-                }
+                //if (output == (int)status::has_moved_and_repair) {
+                //    display_grid();
+                //    return;
+                //}
 
                 i += 2;
                 break;
@@ -278,10 +268,7 @@ main(int argc, char* argv[])
     for (auto& r : grid) r.fill(-1);
     grid[position_y][position_x] = 0;
 
-    movements.push(movement::west);
-    movements.push(movement::south);
-    movements.push(movement::east);
-    movements.push(movement::north);
+    movements.push({ movement::north, movement::east, movement::south, movement::west });
 
     ifstream file(argv[1]);
 
@@ -293,4 +280,10 @@ main(int argc, char* argv[])
     while(op_codes.size() < 100000) op_codes.push_back(0);
 
     compute(op_codes);
+
+    for (int y = 0; y < SIZE; ++y)
+        for (int x = 0; x < SIZE; ++x)
+            if (grid[y][x] == -1) grid[y][x] = 1;
+
+    display_grid();
 }
