@@ -51,13 +51,8 @@ display_grid()
 }
 
 
-bool is_grid_empty(int y, int x) {
-    return grid[y][x] != 1;
-}
-
-bool is_grid_visited(int y, int x) {
-    return grid[y][x] == 0;
-}
+bool is_grid_empty(int y, int x) { return grid[y][x] != 1; }
+bool is_grid_visited(int y, int x) { return grid[y][x] == 0; }
 
 bool is_north_empty() { return is_grid_empty(position_y-1, position_x); }
 bool is_south_empty() { return is_grid_empty(position_y+1, position_x); }
@@ -262,6 +257,31 @@ compute(vector<long long>& op_codes)
     }
 }
 
+bool
+grid_filled()
+{
+    for (int y = 0; y < SIZE; ++y)
+        for (int x = 0; x < SIZE; ++x)
+            if (grid[y][x] == 0) return false;
+    return true;
+}
+
+void
+fill_grid()
+{
+    std::array<std::array<short, SIZE>, SIZE> tmp = grid;
+
+    for (int y = 1; y < SIZE - 1; ++y)
+        for (int x = 1; x < SIZE - 1; ++x)
+            if (grid[y][x] == 2) {
+                if (is_grid_empty(y - 1, x)) tmp[y - 1][x] = 2;
+                if (is_grid_empty(y + 1, x)) tmp[y + 1][x] = 2;
+                if (is_grid_empty(y, x - 1)) tmp[y][x - 1] = 2;
+                if (is_grid_empty(y, x + 1)) tmp[y][x + 1] = 2;
+            }
+    grid = tmp;
+}
+
 int
 main(int argc, char* argv[])
 {
@@ -285,5 +305,11 @@ main(int argc, char* argv[])
         for (int x = 0; x < SIZE; ++x)
             if (grid[y][x] == -1) grid[y][x] = 1;
 
-    display_grid();
+
+    int minutes = 0;
+    for(; !grid_filled(); ++minutes) {
+        fill_grid();
+        //display_grid();
+    }
+    cout << "minutes: " << minutes << endl;
 }
