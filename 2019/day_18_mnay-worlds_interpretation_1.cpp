@@ -8,6 +8,8 @@
 #include <list>
 #include <iomanip>
 #include <unordered_map>
+#include <cmath>
+#include <algorithm>
 
 using namespace std;
 

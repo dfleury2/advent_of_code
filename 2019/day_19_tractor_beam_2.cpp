@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <iomanip>
+#include <cstring>
 
 #include "IntCode.hpp"
 
