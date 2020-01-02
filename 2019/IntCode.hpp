@@ -9,6 +9,8 @@ public:
     using OpCodes = std::vector<long long>;
     OpCodes op_codes;
 
+    virtual ~IntCode() = default;
+
 private:
     long long relative_base = 0;
 
