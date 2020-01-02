@@ -4,7 +4,6 @@
 #include <list>
 #include <string>
 #include <iomanip>
-#include <cstring>
 
 #include "IntCode.hpp"
 
@@ -40,7 +39,7 @@ main(int argc, char* argv[])
         int_code.op_codes.push_back(op_code);
     }
 
-    int position_x = 1500, position_y = 1500;
+    int position_x = 1700, position_y = 1500;
 
     list<int> check_positions;
     const char* msg = "";
@@ -48,8 +47,8 @@ main(int argc, char* argv[])
     bool check_mode = false;
     int check_count = 0;
 
-    for (int y = 2060; y < 2200; ++y) {
-        for (int x = 1650; x < 1950; ++x) {
+    for (int y = 2084; y < 2185; ++y) {
+        for (int x = 1846 - 99; x <= 1846; ++x) {
             BeamDetector tmp;
             tmp.op_codes = IntCode::OpCodes(5000000, 0);
             memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
@@ -65,66 +64,66 @@ main(int argc, char* argv[])
         cout << endl;
     }
 
-//    for (;;) {
-//        BeamDetector tmp;
-//        tmp.op_codes = IntCode::OpCodes(5000000, 0);
-//        memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
-//        memcpy(&tmp.op_codes[0], &int_code.op_codes[0], int_code.op_codes.size() * sizeof(tmp.op_codes[0]));
-//
-//        if (!check_mode) {
-//            // just looking for the
-//            msg = "find...";
-//            tmp.inputs.push_back(position_x);
-//            tmp.inputs.push_back(position_y);
-//        }
-//        else {
-//            // check left/top and left/bottom for the ship
-//            tmp.inputs.push_back(check_positions.front());
-//            check_positions.pop_front();
-//
-//            tmp.inputs.push_back(check_positions.front());
-//            check_positions.pop_front();
-//        }
-//
-//        tmp.compute();
-//
-//        cout << msg << " : " << position_x << ", " << position_y << " = " << (tmp.output ? "*" : " ")
-//            << "    " << check_positions.size() << "   " << check_count
-//            << endl;
-//
-//        if (!check_mode) {
-//            if (tmp.output == 1) {
-//                check_mode = true;
-//                check_count = 0;
-//
-//                msg = "check left/top and left/bottom";
-//                check_positions.push_back(position_x - 100);
-//                check_positions.push_back(position_y);
-//
-//                check_positions.push_back(position_x - 100);
-//                check_positions.push_back(position_y + 100);
-//
-//                position_x++;
-//            }
-//            else {
-//                position_y++;
-//            }
-//        }
-//        else {  // check mode
-//            if (tmp.output == 1) {
-//                check_count += 1;
-//
-//                if (check_count == 2) {
-//                    cout << "wahou: " << position_x << ", " << position_y << endl;
-//                    cout << (position_x - 101) * 10000 + position_y << endl;
-//                    break;
-//                }
-//            }
-//            else {
-//                check_mode = false;
-//                check_positions.clear();
-//                check_count = 0;
-//            }
-//        }
-//    }
+    //for (;;) {
+    //    BeamDetector tmp;
+    //    tmp.op_codes = IntCode::OpCodes(5000000, 0);
+    //    memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
+    //    memcpy(&tmp.op_codes[0], &int_code.op_codes[0], int_code.op_codes.size() * sizeof(tmp.op_codes[0]));
+
+    //    if (!check_mode) {
+    //        // just looking for the
+    //        msg = "find...";
+    //        tmp.inputs.push_back(position_x);
+    //        tmp.inputs.push_back(position_y);
+    //    }
+    //    else {
+    //        // check left/top and left/bottom for the ship
+    //        tmp.inputs.push_back(check_positions.front());
+    //        check_positions.pop_front();
+
+    //        tmp.inputs.push_back(check_positions.front());
+    //        check_positions.pop_front();
+    //    }
+
+    //    tmp.compute();
+
+    //    cout << msg << " : " << position_x << ", " << position_y << " = " << (tmp.output ? "*" : " ")
+    //        << "    " << check_positions.size() << "   " << check_count
+    //        << endl;
+
+    //    if (!check_mode) {
+    //        if (tmp.output == 1) {
+    //            check_mode = true;
+    //            check_count = 0;
+
+    //            msg = "check left/top and left/bottom";
+    //            check_positions.push_back(position_x - 100);
+    //            check_positions.push_back(position_y);
+
+    //            check_positions.push_back(position_x - 100);
+    //            check_positions.push_back(position_y + 100);
+
+    //            position_x++;
+    //        }
+    //        else {
+    //            position_y++;
+    //        }
+    //    }
+    //    else {  // check mode
+    //        if (tmp.output == 1) {
+    //            check_count += 1;
+
+    //            if (check_count == 2) {
+    //                cout << "wahou: " << position_x << ", " << position_y << endl;
+    //                cout << (position_x - 100) * 10000 + position_y << endl;
+    //                break;
+    //            }
+    //        }
+    //        else {
+    //            check_mode = false;
+    //            check_positions.clear();
+    //            check_count = 0;
+    //        }
+    //    }
+    //}
 }
