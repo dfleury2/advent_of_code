@@ -9,6 +9,7 @@ using namespace std;
 
 struct Asteroid {
     int x = 0, y = 0;
+    int visible_count = 0;
 
     bool operator==(const Asteroid& other) const noexcept {
         return x == other.x && y == other.y;
@@ -42,11 +43,8 @@ main(int argc, char* argv[])
             return tmp;
         }();
 
-    int max_visible = 0;
-    Asteroid max_asteroid;
-
-    for (auto&& asteroid : asteroids) {
-        int visible_count = std::count_if(begin(asteroids), end(asteroids),
+    for (auto& asteroid : asteroids) {
+        asteroid.visible_count = std::count_if(begin(asteroids), end(asteroids),
             [&](const Asteroid& other) {
                 if (asteroid == other) return false;
 
@@ -65,12 +63,12 @@ main(int argc, char* argv[])
                 }
                 return true;
             });
-
-        if (visible_count > max_visible) {
-            max_asteroid = asteroid;
-            max_visible = visible_count;
-        }
     }
 
-    cout << max_asteroid.x << ", " << max_asteroid.y << " = " << max_visible << endl;
+    auto max_asteroid = std::max_element(begin(asteroids), end(asteroids),
+        [](const Asteroid& lh, const Asteroid& rh) {
+            return lh.visible_count < rh.visible_count;
+    });
+
+    cout << max_asteroid->x << ", " << max_asteroid->y << " = " << max_asteroid->visible_count << endl;
 }
