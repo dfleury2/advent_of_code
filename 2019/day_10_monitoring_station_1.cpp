@@ -7,9 +7,35 @@
 
 using namespace std;
 
+struct Asteroid;
+
+double norme(const Asteroid& lh, const Asteroid& rh);
+double scalaire(int x1, int y1, int x2, int y2);
+
+
 struct Asteroid {
     int x = 0, y = 0;
     int visible_count = 0;
+
+    bool
+        is_visible_from(const Asteroid& other, const vector<Asteroid>& all) const noexcept {
+        if (*this == other) return false;
+
+        for (auto&& obstacle : all) {
+            if (obstacle != *this && obstacle != other) {
+                auto norme_u = norme(*this, other);
+                auto norme_v = norme(*this, obstacle);
+                auto norme_u_v = norme_u * norme_v;
+                auto scale = norme_v / norme_u;
+                auto scalaire_u_v = scalaire(other.x - this->x, other.y - this->y,
+                    obstacle.x - this->x, obstacle.y - this->y);
+                if (abs(norme_u_v - scalaire_u_v) < 0.000001 && scale < 1.0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     bool operator==(const Asteroid& other) const noexcept {
         return x == other.x && y == other.y;
@@ -45,24 +71,8 @@ main(int argc, char* argv[])
 
     for (auto& asteroid : asteroids) {
         asteroid.visible_count = std::count_if(begin(asteroids), end(asteroids),
-            [&](const Asteroid& other) {
-                if (asteroid == other) return false;
-
-                for (auto&& obstacle : asteroids) {
-                    if (obstacle != asteroid && obstacle != other) {
-                        auto norme_u = norme(asteroid, other);
-                        auto norme_v = norme(asteroid, obstacle);
-                        auto norme_u_v = norme_u * norme_v;
-                        auto scale = norme_v / norme_u;
-                        auto scalaire_u_v = scalaire(other.x - asteroid.x, other.y - asteroid.y,
-                                                     obstacle.x - asteroid.x, obstacle.y - asteroid.y);
-                        if (abs(norme_u_v - scalaire_u_v) < 0.000001 && scale < 1.0) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
-            });
+            [&](const Asteroid& other) { return other.is_visible_from(asteroid, asteroids);
+        });
     }
 
     auto max_asteroid = std::max_element(begin(asteroids), end(asteroids),
