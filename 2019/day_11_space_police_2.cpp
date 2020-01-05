@@ -80,6 +80,8 @@ get_value(vector<long long>& op_codes, int index, parameter_mode mode)
 void
 compute(vector<long long>& op_codes)
 {
+    static int op_code_count = 0;
+
     for(size_t i = 0; i < op_codes.size();) {
 
         auto op_code = get_op_code(op_codes[i]);
@@ -87,6 +89,7 @@ compute(vector<long long>& op_codes)
         auto mode_2 = get_mode(op_codes[i], 1);
         auto mode_3 = get_mode(op_codes[i], 2);
 
+        std::cout << (++op_code_count) << ": " << op_code << std::endl;
         switch(op_code) {
             case 1: { // +
                 op_codes[mode_3 == parameter_mode::immediate ? i + 3 : op_codes[i + 3] + (mode_3 == parameter_mode::relative ? relative_base : 0)] =
