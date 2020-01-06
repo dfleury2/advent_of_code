@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <unordered_map>
+#include <istream>
 
 // ---------------------------   IntCode   -----------------------------------
 class IntCode {
@@ -12,10 +13,11 @@ public:
     OpCodes op_codes;
     long long output = 0;
 
-    IntCode(const char* filename) {
-        std::ifstream file(filename);
+    IntCode(const char* filename) : IntCode(std::ifstream(filename))
+    {}
 
-        for (long long op_code = 0; file >> op_code; file.ignore(512, ',')) {
+    IntCode(std::istream&& is) {
+        for (long long op_code = 0; is >> op_code; is.ignore(512, ',')) {
             op_codes.push_back(op_code);
         }
     }

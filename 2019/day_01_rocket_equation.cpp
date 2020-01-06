@@ -73,15 +73,15 @@ int main(int argc, char* argv[])
     { // part one
         FuelComputer fc;
         auto total_fuel = fc.compute_fuel(ifstream(filename));
-        cout << "Result: " << total_fuel
-            << "\n ---> part one: " << (total_fuel == 3160932 ? "Success" : "FAILED") << endl;
+        cout << "Day 01 - part one: " << total_fuel
+            << "\n ---> " << (total_fuel == 3160932 ? "Success" : "FAILED") << endl;
     }
 
     { // part two
         FuelComputer2 fc;
         auto total_fuel = fc.compute_fuel(ifstream(filename));
-        cout << "Result: " << total_fuel
-            << "\n ---> part two: " << (total_fuel == 4738549 ? "Success" : "FAILED") << endl;
+        cout << "Day 01 - part two: " << total_fuel
+            << "\n ---> " << (total_fuel == 4738549 ? "Success" : "FAILED") << endl;
     }
 
    return result;
