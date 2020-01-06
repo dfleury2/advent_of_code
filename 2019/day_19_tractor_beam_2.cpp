@@ -12,6 +12,8 @@ using namespace std;
 class BeamDetector : public IntCode
 {
 public:
+    using IntCode::IntCode;
+
     list<int> inputs;
 
     virtual long long get_input() override {
@@ -32,13 +34,6 @@ public:
 int
 main(int argc, char* argv[])
 {
-    BeamDetector int_code;
-
-    ifstream file(argv[1]);
-    for (long long op_code = 0; file >> op_code; file.ignore(512, ',')) {
-        int_code.op_codes.push_back(op_code);
-    }
-
     int position_x = 1700, position_y = 1500;
 
     list<int> check_positions;
@@ -49,10 +44,7 @@ main(int argc, char* argv[])
 
     for (int y = 2084; y < 2185; ++y) {
         for (int x = 1846 - 99; x <= 1846; ++x) {
-            BeamDetector tmp;
-            tmp.op_codes = IntCode::OpCodes(5000000, 0);
-            memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
-            memcpy(&tmp.op_codes[0], &int_code.op_codes[0], int_code.op_codes.size() * sizeof(tmp.op_codes[0]));
+            BeamDetector tmp(argv[1]);
 
             tmp.inputs.push_back(x);
             tmp.inputs.push_back(y);

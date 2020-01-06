@@ -4,6 +4,7 @@
 #include <vector>
 #include <queue>
 #include <cmath>
+#include <algorithm>
 
 struct Node {
     Node() = default;

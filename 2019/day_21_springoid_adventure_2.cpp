@@ -13,6 +13,8 @@ using namespace std;
 class SpringoidAdventure : public IntCode
 {
 public:
+    using IntCode::IntCode;
+
     list<int> inputs;
 
     virtual long long get_input() override {
@@ -48,18 +50,7 @@ public:
 int
 main(int argc, char* argv[])
 {
-    SpringoidAdventure int_code;
-
-    ifstream file(argv[1]);
-    for (long long op_code = 0; file >> op_code; file.ignore(512, ',')) {
-        int_code.op_codes.push_back(op_code);
-    }
-
-    SpringoidAdventure tmp;
-    tmp.op_codes = IntCode::OpCodes(5000000, 0);
-    memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
-    memcpy(&tmp.op_codes[0], &int_code.op_codes[0], int_code.op_codes.size() * sizeof(tmp.op_codes[0]));
-
-    tmp.compute();
-    cout << endl << tmp.output << endl;
+    SpringoidAdventure int_code(argv[1]);
+    int_code.compute();
+    cout << endl << int_code.output << endl;
 }

@@ -14,6 +14,8 @@ using namespace std;
 class CategorySix : public IntCode
 {
 public:
+    using IntCode::IntCode;
+
     int id = 0;
 
     virtual long long get_input() override {
@@ -39,20 +41,10 @@ main(int argc, char* argv[])
 {
     CategorySix int_code(argv[1]);
 
-    ifstream file(argv[1]);
-    for (long long op_code = 0; file >> op_code; file.ignore(512, ',')) {
-        int_code.op_codes.push_back(op_code);
-    }
-
-    CategorySix tmp;
-    tmp.op_codes = IntCode::OpCodes(2500000, 0);
-    memset(&tmp.op_codes[0], 0, tmp.op_codes.size() * sizeof(tmp.op_codes[0]));
-    memcpy(&tmp.op_codes[0], &int_code.op_codes[0], int_code.op_codes.size() * sizeof(tmp.op_codes[0]));
-
     vector<CategorySix> codes;
     for (int i = 0; i < 50; ++i) {
-        auto copy = tmp;
-        tmp.id = i;
+        auto copy = int_code;
+        copy.id = i;
         codes.push_back(std::move(copy));
     }
 }
