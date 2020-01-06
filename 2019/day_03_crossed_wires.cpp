@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <string>
 #include <set>
 #include <vector>
@@ -8,12 +9,14 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
+    ifstream file(argv[1]);
+
     set<pair<int,int>> wire1, wire2;
     
     auto* wire = &wire1;
-    for(string line; getline(cin, line);) {
+    for(string line; getline(file, line);) {
         int posX = 0, posY = 0;
         istringstream iss(line);
         for(string command; getline(iss, command, ',');) {
@@ -41,5 +44,9 @@ int main()
     int min_distance = 2000000000;
     for(auto&& p : inters)
         min_distance = std::min(abs(p.first) + abs(p.second), min_distance);
-    cout << min_distance << std::endl;
+
+    { // part one
+        cout << "Day 03 - part one: " << min_distance
+            << "\n ---> " << (min_distance == 3247 ? "Success" : "FAILED") << endl;
+    }
 }
