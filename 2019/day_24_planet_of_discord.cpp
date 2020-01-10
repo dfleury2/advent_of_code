@@ -11,26 +11,17 @@
 
 using namespace std;
 
-using Eris = vector<string>;
+using Eris = array<array<char, 5>, 5>;
 
 set<Eris> previous;
-
-void
-complete(Eris& e) {
-    e.insert(begin(e), string(begin(e)->size(), '+'));
-    e.push_back(*begin(e));
-    for (auto& r : e) {
-        r = "+" + r + "+";
-    }
-}
 
 unsigned long long
 biodiversity(const Eris& e) {
     unsigned long long v = 0;
     unsigned long long index = 1;
-    for (int r = 1; r <= 5; ++r) {
-        for (int c = 1; c <= 5; ++c) {
-            v += index * (e[r][c] == '#' ? 1 : 0);
+    for (auto&& r : e) {
+        for (auto&& c : r) {
+            v += index * (c == '#' ? 1 : 0);
             index *= 2;
         }
     }
@@ -41,7 +32,10 @@ void
 display(int i, const Eris& s) {
     cout << i << " -------------------- " << biodiversity(s) << "\n";
     for (auto&& r : s) {
-        cout << r << "\n";
+        for (auto&& c : r) {
+            cout << c;
+        }
+        cout << "\n";
     }
 }
 
@@ -49,20 +43,20 @@ void
 evolve(Eris& e) {
     array<array<int, 5>, 5> counts = {};
 
-    for (int r = 1; r <= 5; ++r) {
-        for (int c = 1; c <= 5; ++c) {
-            int count = (e[r][c - 1] == '#') +
-                (e[r][c + 1] == '#') +
-                (e[r - 1][c] == '#') +
-                (e[r + 1][c] == '#');
+    for (int r = 0; r < 5; ++r) {
+        for (int c = 0; c < 5; ++c) {
+            int count = (c ? (e[r][c - 1] == '#') : 0) +
+                (c != 4 ? (e[r][c + 1] == '#') : 0) +
+                (r ? (e[r - 1][c] == '#') : 0) +
+                (r != 4 ? (e[r + 1][c] == '#') : 0);
 
-            counts[r-1][c-1] = count;
+            counts[r][c] = count;
         }
     }
 
-    for (int r = 1; r <= 5; ++r) {
-        for (int c = 1; c <= 5; ++c) {
-            int count = counts[r - 1][c - 1];
+    for (int r = 0; r < 5; ++r) {
+        for (int c = 0; c < 5; ++c) {
+            int count = counts[r][c];
             if (e[r][c] == '#' && count != 1) e[r][c] = '.';
             else if (e[r][c] == '.' && (count == 1 || count == 2)) e[r][c] = '#';
         }
@@ -72,14 +66,13 @@ evolve(Eris& e) {
 int
 main(int argc, char* argv[])
 {
-    Eris eris;
-    eris.push_back(".#.##");
-    eris.push_back("...#.");
-    eris.push_back("....#");
-    eris.push_back(".#...");
-    eris.push_back("..#..");
-        
-    complete(eris);
+    Eris eris = {{
+        {'.', '#', '.', '#', '#'},
+        {'.', '.', '.', '#', '.'},
+        {'.', '.', '.', '.', '#'},
+        {'.', '#', '.', '.', '.'},
+        {'.', '.', '#', '.', '.'},
+        }};
     
     for(int i = 0; true; ++i) {
         if (!previous.insert(eris).second) {
@@ -87,7 +80,6 @@ main(int argc, char* argv[])
         }
         evolve(eris);
     }
-
     auto result = biodiversity(eris);
     cout << "Day 24 - part one: " << result
         << "\n ---> " << (result == 18842609 ? "Success" : "FAILED") << endl;
