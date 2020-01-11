@@ -1,78 +1,60 @@
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include <deque>
-#include <algorithm>
-#include <string>
-#include <list>
-#include <thread>
 #include <array>
-#include <set>
+#include <unordered_set>
+#include <bitset>
 
 using namespace std;
 
-using Eris = array<array<char, 5>, 5>;
+using Eris = std::bitset<25>;
 
-set<Eris> previous;
+unordered_set<Eris> previous;
 
 unsigned long long
 biodiversity(const Eris& e) {
-    unsigned long long v = 0;
-    unsigned long long index = 1;
-    for (auto&& r : e) {
-        for (auto&& c : r) {
-            v += index * (c == '#' ? 1 : 0);
-            index *= 2;
-        }
-    }
-    return v;
+    return e.to_ullong();
 }
 
 void
-display(int i, const Eris& s) {
-    cout << i << " -------------------- " << biodiversity(s) << "\n";
-    for (auto&& r : s) {
-        for (auto&& c : r) {
-            cout << c;
-        }
-        cout << "\n";
+display(int i, const Eris& e) {
+    cout << i << " -------------------- " << biodiversity(e) << "\n";
+    for (size_t i = 0; i < e.size(); ++i) {
+        if (i && !(i % 5)) cout << "\n";
+        cout << (e[i] ? '#' : '.');
     }
+    cout << "\n";
 }
 
 void
 evolve(Eris& e) {
-    array<array<int, 5>, 5> counts = {};
+    array<int, 5 * 5> counts = {};
 
-    for (int r = 0; r < 5; ++r) {
-        for (int c = 0; c < 5; ++c) {
-            int count = (c ? (e[r][c - 1] == '#') : 0) +
-                (c != 4 ? (e[r][c + 1] == '#') : 0) +
-                (r ? (e[r - 1][c] == '#') : 0) +
-                (r != 4 ? (e[r + 1][c] == '#') : 0);
+    for (size_t i = 0; i < e.size(); ++i) {
+        int count = (i % 5 ? e[i - 1] : 0) +
+            (i % 5 != 4 ? e[i + 1] : 0) +
+            (i > 4 ? e[i - 5] : 0) +
+            (i < 20 ? e[i + 5]: 0);
 
-            counts[r][c] = count;
-        }
+        counts[i] = count;
     }
 
-    for (int r = 0; r < 5; ++r) {
-        for (int c = 0; c < 5; ++c) {
-            int count = counts[r][c];
-            if (e[r][c] == '#' && count != 1) e[r][c] = '.';
-            else if (e[r][c] == '.' && (count == 1 || count == 2)) e[r][c] = '#';
-        }
+    for (size_t i = 0; i < e.size(); ++i) {
+        int count = counts[i];
+        if (e[i] && count != 1) e[i] = 0;
+        else if (!e[i] && (count == 1 || count == 2)) e[i] = 1;
     }
 }
 
 int
 main(int argc, char* argv[])
 {
-    Eris eris = {{
-        {'.', '#', '.', '#', '#'},
-        {'.', '.', '.', '#', '.'},
-        {'.', '.', '.', '.', '#'},
-        {'.', '#', '.', '.', '.'},
-        {'.', '.', '#', '.', '.'},
-        }};
+    Eris eris{
+        "01011"
+        "00010"
+        "00001"
+        "01000"
+        "00100"
+    };
     
     for(int i = 0; previous.insert(eris).second; ++i) {
         display(i, eris);
