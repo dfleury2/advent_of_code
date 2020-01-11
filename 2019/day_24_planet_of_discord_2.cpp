@@ -74,11 +74,12 @@ main(int argc, char* argv[])
         {'.', '.', '#', '.', '.'},
         }};
     
-    for(int i = 0; previous.insert(eris).second; ++i) {
-        display(i, eris);
+    for(int i = 0; true; ++i) {
+        if (!previous.insert(eris).second) {
+            break;
+        }
         evolve(eris);
     }
-    
     auto result = biodiversity(eris);
     cout << "Day 24 - part one: " << result
         << "\n ---> " << (result == 18842609 ? "Success" : "FAILED") << endl;
